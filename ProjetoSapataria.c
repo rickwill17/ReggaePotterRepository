@@ -59,7 +59,7 @@ int main(){
 
     printf("\n\n\n");
     printf("************* Menu Principal *************\n");
-    printf("Escolha a opição desejada:\n\n");
+    printf("Escolha a opÃ§Ã£o desejada:\n\n");
     printf("\t1. Cadastro de Produto.\n");
     printf("\t2. Cadastro de Cliente.\n");
     printf("\t3. Consultar Estoque.\n");
