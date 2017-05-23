@@ -27,29 +27,45 @@ struct dim_cliente{
 typedef struct dim_cliente dim_cliente;
 
 
-
-
-
-
-
+dim_produto *listaProdutos;
+dim_cliente *listaClientes;
 /*---------------------------------------------------------------------------------------------------------------------------------*/
 
 
+/*------------------------------------------------------------Estruturas------------------------------------------------------------*/
+int InicializaProduto(dim_produto **listaProdutos)
+    {
+	   *listaProdutos = NULL; // inicializa
+	   	return 0;
+    }
+
+
+int InicializaCliente(dim_cliente **listaClientes)
+    {
+	   *listaClientes = NULL; // inicializa
+	   	return 0;
+    }
+
+/*---------------------------------------------------------------------------------------------------------------------------------*/
 int main(){
 
-        int opc;
+
+    InicializaCliente(&listaClientes);
+    InicializaProduto(&listaProdutos);
 
 
-        printf("\n\n\n");
-	
-        printf("************* Menu Principal *************\n");
-        printf("Escolha a opÃ§Ã£o desejada:\n\n");
-        printf("\t1. Cadastro de Produto.\n");
-        printf("\t2. Cadastro de Cliente.\n");
-        printf("\t3. Consultar Estoque.\n");
-        printf("\t4. Efetuar Venda.\n\n");
-        printf("\t0. Sair.\n\n");
-        scanf("%d",&opc);
+    int opc;
+
+
+    printf("\n\n\n");
+    printf("************* Menu Principal *************\n");
+    printf("Escolha a opição desejada:\n\n");
+    printf("\t1. Cadastro de Produto.\n");
+    printf("\t2. Cadastro de Cliente.\n");
+    printf("\t3. Consultar Estoque.\n");
+    printf("\t4. Efetuar Venda.\n\n");
+    printf("\t0. Sair.\n\n");
+    scanf("%d",&opc);
 
 
 
