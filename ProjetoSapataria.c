@@ -112,7 +112,7 @@ void ArquivoProduto(int id,char nome[TAM],char modelo[TAM],char tipo[TAM],int qu
 
 
 /*---------------------------------------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------------- Funções de Inserir ----------------------------------------------------------*/
+/*---------------------------------------------------- Função de Inserir ----------------------------------------------------------*/
 int Inserir_fim_LS_Cliente(dim_cliente **inicio){
     dim_cliente *no_cliente, *percorre;
     no_cliente = (dim_cliente *) malloc(sizeof(dim_cliente));
@@ -209,7 +209,37 @@ int Inserir_fim_LS_Produto(dim_produto **inicio){
 	return 0;
 	}
 /*---------------------------------------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------------- Funções Principal -----------------------------------------------------------*/
+/*--------------------------------------------------- Funções de Exiber -------------------------------------------------------*/
+
+int ExibirEstoque(dim_produto *inicio){
+    int i;
+    if(inicio == NULL){
+        return 1;
+    }
+
+    while(inicio != NULL){
+        printf("\n");
+
+
+        int id, numeracao, quantidade;
+        char nome[TAM];
+        char tipo[TAM];
+        char modelo[TAM];
+
+
+        printf("\tID: %d\n",inicio ->id);
+        printf("\tProduto: %s\n", inicio ->nome);
+        printf("\tTipo: %s\n", inicio ->tipo);
+        printf("\tModelo: %s\n", inicio ->modelo);
+        printf("\tQuantidade: %d\n", inicio ->quantidade);
+        printf("\n");
+        inicio = inicio -> prox;
+    }
+    printf("\n\n");
+    return 0;
+
+}
+/*--------------------------------------------------- Função Principal -----------------------------------------------------------*/
 
 
 int main(){
@@ -219,29 +249,38 @@ int main(){
     InicializaProduto(&listaProdutos);
 
 
-    int opc;
+    int opc, aux = 0, controle = 0;
+    while(controle != 1){
 
+        printf("\n\n\n");
+        printf("************* Menu Principal *************\n");
+        printf("Escolha a opção desejada:\n\n");
+        printf("\t1. Cadastro de Produto.\n");
+        printf("\t2. Cadastro de Cliente.\n");
+        printf("\t3. Consultar Estoque.\n");
+        printf("\t4. Efetuar Venda.\n\n");
+        printf("\t0. Sair.\n\n");
+        scanf("%d",&opc);
 
-    printf("\n\n\n");
-    printf("************* Menu Principal *************\n");
-    printf("Escolha a opção desejada:\n\n");
-    printf("\t1. Cadastro de Produto.\n");
-    printf("\t2. Cadastro de Cliente.\n");
-    printf("\t3. Consultar Estoque.\n");
-    printf("\t4. Efetuar Venda.\n\n");
-    printf("\t0. Sair.\n\n");
-    scanf("%d",&opc);
-
-    switch(opc){
-        case 1:
-            Inserir_fim_LS_Produto(&listaProdutos);
-        break;
-        case 2:
-            Inserir_fim_LS_Cliente(&listaClientes);
-        break;
-
+        switch(opc){
+            case 1:
+                Inserir_fim_LS_Produto(&listaProdutos);
+            break;
+            case 2:
+                Inserir_fim_LS_Cliente(&listaClientes);
+            break;
+            case 3:
+                printf("************* Estoque *************\n");
+                            aux = ExibirEstoque(listaProdutos);
+                            if(aux == 1){
+                                printf(" Lista vazia!\n");
+                            }
+            break;
+            case 0:
+                controle = 1;
+            break;
+        }
     }
-
     return 0;
 }
 /*---------------------------------------------------------------------------------------------------------------------------------*/
