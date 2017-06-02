@@ -32,7 +32,7 @@ dim_cliente *listaClientes;
 /*---------------------------------------------------------------------------------------------------------------------------------*/
 
 
-/*------------------------------------------------------------Estruturas------------------------------------------------------------*/
+/*----------------------------------------------------------- Inicializando -------------------------------------------------------*/
 int InicializaProduto(dim_produto **listaProdutos)
     {
 	   *listaProdutos = NULL; // inicializa
@@ -51,7 +51,7 @@ int InicializaCliente(dim_cliente **listaClientes)
 /*---------------------------------------------- Escrevendo Arquivos --------------------------------------------------------------*/
 
 void ArquivoCliente(char nome[TAM], long int rg,long int telefone, int totalCompras, char endereco[TAM]){
-// criando a variável ponteiro para o arquivo
+// criando a variÃ¡vel ponteiro para o arquivo
     FILE *pont_arq;
 
 
@@ -78,7 +78,7 @@ void ArquivoCliente(char nome[TAM], long int rg,long int telefone, int totalComp
 
 void ArquivoProduto(int id,char nome[TAM],char modelo[TAM],char tipo[TAM],int quantidade, float preco){
 
-// criando a variável ponteiro para o arquivo
+// criando a variÃ¡vel ponteiro para o arquivo
     FILE *pont_arq;
 
 
@@ -186,7 +186,7 @@ int Inserir_fim_LS_Produto(dim_produto **inicio){
     scanf("%d",&quantidadeProduto);
     no_produto-> quantidade = quantidadeProduto;
 
-    printf("\tPreço da unidade (reais):\n");
+    printf("\tPreÃ§o da unidade (reais):\n");
     scanf("%f", &precoProduto);
     no_produto -> preco = precoProduto;
 
@@ -209,7 +209,52 @@ int Inserir_fim_LS_Produto(dim_produto **inicio){
 	return 0;
 	}
 /*---------------------------------------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------------- Funções de Exiber -------------------------------------------------------*/
+/*---------------------------------------------------- Função de Venda ------------------------------------------------------------*/
+
+int RealizarVenda(dim_produto **inicio, int cod, int num){
+    int controle;
+    dim_produto *percorre, *verificaCod;
+    if (*inicio==NULL)
+	{
+    return 1; // Lista vazia
+	}else{
+        percorre = *inicio;
+        verificaCod = *inicio;
+        if(verificaCod->prox == NULL){
+            if(verificaCod->id==cod){
+                if(verificaCod->quantidade < num){
+                    printf("Quantidade insuficiente.\n");
+                }else{
+                    verificaCod->quantidade =(verificaCod->quantidade)-num;
+                    printf("Total: %.2f.\n",(verificaCod->preco)*num);
+                    printf("1- Continuar.\n");
+                    printf("2- Sair.\n");
+                    scanf("%d",&controle);
+                    return controle;
+                 }
+            }
+        }
+        else{
+            while (verificaCod->prox != NULL){
+                percorre = percorre -> prox;
+                verificaCod =  verificaCod->prox;
+                if(verificaCod->id==cod){
+                    verificaCod ->quantidade = (verificaCod ->quantidade)-num;
+                    printf("Total: %.2f.\n",(verificaCod->preco)*num);
+                    printf("1- Continuar.\n");
+                    printf("2- Sair.\n");
+                    scanf("%d",&controle);
+                    return controle;
+                }
+            }
+        }
+	}
+
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------- Funções de Exiber -----------------------------------------------------------*/
 
 int ExibirEstoque(dim_produto *inicio){
     int i;
@@ -248,8 +293,8 @@ int main(){
     InicializaCliente(&listaClientes);
     InicializaProduto(&listaProdutos);
 
-
-    int opc, aux = 0, controle = 0;
+    int codProd, quantProd, controleVenda;
+    int opc, aux = 0, aux1 = 0, controle = 0;
     while(controle != 1){
 
         printf("\n\n\n");
@@ -271,11 +316,26 @@ int main(){
             break;
             case 3:
                 printf("************* Estoque *************\n");
-                            aux = ExibirEstoque(listaProdutos);
-                            if(aux == 1){
-                                printf(" Lista vazia!\n");
-                            }
+                    aux = ExibirEstoque(listaProdutos);
+                    if(aux == 1){
+                        printf(" Lista vazia!\n");
+                    }
             break;
+            case 4:
+                controleVenda = 0;
+                while(controleVenda != 2){
+                    printf("************* Venda *************\n");
+                    printf("Digite o id do produto:\n");
+                    scanf("%d",&codProd);
+                    printf("Digite a quantidade:\n");
+                    scanf("%d",&quantProd);
+                    controleVenda = RealizarVenda(&listaProdutos, codProd, quantProd);
+                    if(controleVenda == 1){
+                        printf(" Lista vazia!\n");
+                    }
+                }
+            break;
+
             case 0:
                 controle = 1;
             break;
