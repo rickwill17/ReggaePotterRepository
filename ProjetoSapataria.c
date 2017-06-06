@@ -4,7 +4,7 @@
 
 #define TAM 50
 
-
+float total = 0;
 /*------------------------------------------------------------Estruturas------------------------------------------------------------*/
 struct dim_produto{
 	int id, numeracao, quantidade;
@@ -109,6 +109,30 @@ void ArquivoProduto(int id,char nome[TAM],char modelo[TAM],char tipo[TAM],int qu
 
 
 }
+
+void ArquivoNotaFiscal(float Total,char Nome[TAM], long int RG){
+
+    FILE *pont_arq;
+
+    char nome[TAM];
+    strcpy(nome, Nome);
+    long int rg = RG;
+    float total = Total;
+
+
+    pont_arq = fopen("arquivoNotasFiscais.txt", "a");
+
+    fprintf(pont_arq, "%lu ", rg);
+    fprintf(pont_arq, "%s ", nome);
+    fprintf(pont_arq, "%.2f \n\n", total);
+
+    fclose(pont_arq);
+
+}
+
+
+
+
 
 
 /*---------------------------------------------------------------------------------------------------------------------------------*/
@@ -234,6 +258,9 @@ int RealizarVenda(dim_produto **inicio){
                 }else{
                     verificaCod->quantidade =(verificaCod->quantidade)-num;
                     printf("Subtotal: %.2f.\n",(verificaCod->preco)*num);
+
+                    total += (verificaCod->preco)*num;
+
                     printf("1- Continuar.\n");
                     printf("2- Sair.\n");
                     scanf("%d",&controle);
@@ -241,7 +268,9 @@ int RealizarVenda(dim_produto **inicio){
                     if(controle == 1){
                         return controle;
                     }else{
+                        printf("Total: %.2f\n",total);
                         controle = verificarCadastro();
+                        total = 0;
                     }
                     return controle;
                  }
@@ -253,6 +282,8 @@ int RealizarVenda(dim_produto **inicio){
                 verificaCod =  verificaCod->prox;
                 if(verificaCod->id==cod){
                     verificaCod ->quantidade = (verificaCod ->quantidade)-num;
+
+                    total += (verificaCod->preco)*num;
                     printf("1- Continuar.\n");
                     printf("2- Sair.\n");
                     scanf("%d",&controle);
@@ -260,7 +291,9 @@ int RealizarVenda(dim_produto **inicio){
                     if(controle == 1){
                         return controle;
                     }else{
+                        printf("Total: %.2f\n",total);
                         controle = verificarCadastro();
+                        total = 0;
                     }
                     return controle;
                 }
@@ -345,6 +378,7 @@ int confirmarVenda(dim_cliente *inicio){
     while(controle != 1){
         if(inicio->rg == RG){
                 inicio->totalCompras+=1;
+                ArquivoNotaFiscal(total,inicio->nome,inicio->rg);
                 return 2;
             }
         if(inicio->rg != RG){
