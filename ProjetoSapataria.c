@@ -4,6 +4,7 @@
 
 #define TAM 50
 
+
 /*------------------------------------------------------------Estruturas------------------------------------------------------------*/
 struct dim_produto{
 	int id, numeracao, quantidade;
@@ -50,7 +51,7 @@ int InicializaCliente(dim_cliente **listaClientes)
 
 /*---------------------------------------------- Escrevendo Arquivos --------------------------------------------------------------*/
 
-void ArquivoCliente(char nome[TAM], long int rg,long int telefone, int totalCompras, char endereco[TAM]){
+void ArquivoCliente(char nome[TAM], long int rg,long int telefone, char endereco[TAM]){
 // criando a variÃ¡vel ponteiro para o arquivo
     FILE *pont_arq;
 
@@ -59,7 +60,6 @@ void ArquivoCliente(char nome[TAM], long int rg,long int telefone, int totalComp
     strcpy(Nome, nome);
     long int RG = rg;
     long int Telefone = telefone;
-    int TotalCompras = totalCompras;
     char Endereco[TAM];
     strcpy(Endereco, endereco);
 
@@ -70,7 +70,7 @@ void ArquivoCliente(char nome[TAM], long int rg,long int telefone, int totalComp
     fprintf(pont_arq, "%s ", Nome);
     fprintf(pont_arq, "%lu ", Telefone);
     fprintf(pont_arq, "%s ", Endereco);
-    fprintf(pont_arq, "%d ", TotalCompras);
+
   // fechando arquivo
     fclose(pont_arq);
 
@@ -120,28 +120,26 @@ int Inserir_fim_LS_Cliente(dim_cliente **inicio){
 
 
     char nomeC[TAM], enderecoC[TAM];
-    int  totalComprasC;
+    int  totalComprasC = 0;
     long int telefoneC, rgC;
 
-
-    printf("\tNome:\n");
+    printf("************* Cadastro de Cliente *************\n");
+    printf("\tNome:\n\t");
     scanf("%s", nomeC);
     strcpy(no_cliente -> nome,nomeC);
-    printf("\tRG:\n");
+    printf("\tRG:\n\t");
     scanf("%lu", &rgC);
     no_cliente-> rg = rgC;
-    printf("\tEndereço:\n");
+    printf("\tEndereço:\n\t");
     scanf("%s", enderecoC);
     strcpy(no_cliente -> endereco,enderecoC);
-    printf("\tTotal de compras:\n");
-    scanf("%d", &totalComprasC);
     no_cliente ->totalCompras = totalComprasC;
-    printf("\tTelefone:\n");
+    printf("\tTelefone:\n\t");
     scanf("%lu", &telefoneC);
     no_cliente ->telefone = telefoneC;
 
 
-    ArquivoCliente(nomeC, rgC, telefoneC, totalComprasC, enderecoC);
+    ArquivoCliente(nomeC, rgC, telefoneC, enderecoC);
 
     if (*inicio==NULL)
 	{ /* lista vazia. */
@@ -170,23 +168,23 @@ int Inserir_fim_LS_Produto(dim_produto **inicio){
     char modeloProduto[TAM];
     float precoProduto;
 
-    printf("\tID:\n");
+    printf("\tID:\n\t");
     scanf("%d", &idProduto);
     no_produto -> id = idProduto;
-    printf("\tNome: \n");
+    printf("\tNome: \n\t");
     scanf("%s", nomeProduto);
     strcpy(no_produto -> nome,nomeProduto);
-    printf("\tTipo: \n");
+    printf("\tTipo: \n\t");
     scanf("%s", tipoProduto);
     strcpy(no_produto -> tipo,tipoProduto);
-    printf("\tModelo: \n");
+    printf("\tModelo: \n\t");
     scanf("%s", modeloProduto);
     strcpy(no_produto -> modelo, modeloProduto);
-    printf("Quantidade:\n");
+    printf("\tQuantidade:\n\t");
     scanf("%d",&quantidadeProduto);
     no_produto-> quantidade = quantidadeProduto;
 
-    printf("\tPreÃ§o da unidade (reais):\n");
+    printf("\tPreço da unidade (reais):\n\t");
     scanf("%f", &precoProduto);
     no_produto -> preco = precoProduto;
 
@@ -211,12 +209,21 @@ int Inserir_fim_LS_Produto(dim_produto **inicio){
 /*---------------------------------------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------- Função de Venda ------------------------------------------------------------*/
 
-int RealizarVenda(dim_produto **inicio, int cod, int num){
-    int controle;
+int RealizarVenda(dim_produto **inicio){
+    int controle, cod, num;
+
     dim_produto *percorre, *verificaCod;
+
+    printf("Digite o id do produto:\n");
+    scanf("%d",&cod);
+    printf("Digite a quantidade:\n");
+    scanf("%d",&num);
+
+
     if (*inicio==NULL)
 	{
-    return 1; // Lista vazia
+	printf("Lista vazia!\n");
+    return 2; // Lista vazia
 	}else{
         percorre = *inicio;
         verificaCod = *inicio;
@@ -226,10 +233,16 @@ int RealizarVenda(dim_produto **inicio, int cod, int num){
                     printf("Quantidade insuficiente.\n");
                 }else{
                     verificaCod->quantidade =(verificaCod->quantidade)-num;
-                    printf("Total: %.2f.\n",(verificaCod->preco)*num);
+                    printf("Subtotal: %.2f.\n",(verificaCod->preco)*num);
                     printf("1- Continuar.\n");
                     printf("2- Sair.\n");
                     scanf("%d",&controle);
+
+                    if(controle == 1){
+                        return controle;
+                    }else{
+                        controle = verificarCadastro();
+                    }
                     return controle;
                  }
             }
@@ -240,10 +253,15 @@ int RealizarVenda(dim_produto **inicio, int cod, int num){
                 verificaCod =  verificaCod->prox;
                 if(verificaCod->id==cod){
                     verificaCod ->quantidade = (verificaCod ->quantidade)-num;
-                    printf("Total: %.2f.\n",(verificaCod->preco)*num);
                     printf("1- Continuar.\n");
                     printf("2- Sair.\n");
                     scanf("%d",&controle);
+
+                    if(controle == 1){
+                        return controle;
+                    }else{
+                        controle = verificarCadastro();
+                    }
                     return controle;
                 }
             }
@@ -252,6 +270,92 @@ int RealizarVenda(dim_produto **inicio, int cod, int num){
 
 }
 
+
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------- Funçao de Consultar Cliente -------------------------------------------------*/
+
+int ConsultarCliente(long int RgCliente ,dim_cliente *inicio){
+
+    int RG = RgCliente, controle = 0;
+
+    if(inicio == NULL){
+        return 1;
+    }
+
+    while(controle == 0){
+        if(inicio->rg != RG){
+            inicio = inicio -> prox;
+            if(inicio == NULL){
+                return 1;
+            }
+
+        }
+        else{
+        printf("\n");
+        printf("\tNome: %s\n", inicio ->nome);
+        printf("\tRG: %lu\n", inicio->rg);
+        printf("\tTelefone: %lu\n", inicio->telefone);
+        printf("\tTotal de compras: %d\n", inicio->totalCompras);
+        printf("\n");
+        controle = 1;
+        }
+    }
+    printf("\n\n");
+    return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------- Funçao de Pesquisa ----------------------------------------------------------*/
+
+int verificarCadastro(){
+    int opc = 0, aux = 0;
+
+
+    printf("O cliente possui cadastro?\n");
+    printf("1- Sim.\n");
+    printf("2- Nao.\n");
+    scanf("%d", &opc);
+
+    if(opc == 2){
+        printf("Cuidado!Estoque desatulizado!\n Sempre Cadastre o cliente antes da compra!!!\n");
+        aux = 1;
+
+        Inserir_fim_LS_Cliente(&listaClientes);
+    }else{
+       aux = confirmarVenda(listaClientes);
+    }
+
+    return aux;
+}
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+int confirmarVenda(dim_cliente *inicio){
+
+    long int RG;
+    int controle = 0;
+
+    printf("Digite o RG do cliente:");
+    scanf("%lu", &RG);
+
+    if(inicio == NULL){
+        printf("Lista vazia!");
+        return 1;
+    }
+
+    while(controle != 1){
+        if(inicio->rg == RG){
+                inicio->totalCompras+=1;
+                return 2;
+            }
+        if(inicio->rg != RG){
+            inicio = inicio -> prox;
+            if(inicio == NULL){
+            controle = 1;
+            }
+        }
+    }
+
+}
 
 /*---------------------------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------------- Funções de Exiber -----------------------------------------------------------*/
@@ -293,8 +397,9 @@ int main(){
     InicializaCliente(&listaClientes);
     InicializaProduto(&listaProdutos);
 
+    long int rgCliente = 0, rgCliente2 = 0;
     int codProd, quantProd, controleVenda;
-    int opc, aux = 0, aux1 = 0, controle = 0;
+    int opc, aux = 0, aux1 = 0, aux2 = 0, aux3 = 0, controle = 0;
     while(controle != 1){
 
         printf("\n\n\n");
@@ -303,7 +408,8 @@ int main(){
         printf("\t1. Cadastro de Produto.\n");
         printf("\t2. Cadastro de Cliente.\n");
         printf("\t3. Consultar Estoque.\n");
-        printf("\t4. Efetuar Venda.\n\n");
+        printf("\t4. Consultar Cliente.\n");
+        printf("\t5. Efetuar Venda.                Sempre cadastre o cliente antes!\n\n");
         printf("\t0. Sair.\n\n");
         scanf("%d",&opc);
 
@@ -322,18 +428,20 @@ int main(){
                     }
             break;
             case 4:
-                controleVenda = 0;
+                printf("************* Consultar Cliente *************\n");
+                printf("Digite o RG do Cliente:\n");
+                scanf("%lu",&rgCliente);
+                aux2 = ConsultarCliente(rgCliente, listaClientes);
+                if(aux2 == 1){
+                        printf(" Não Encontrado!\n");
+                    }
+            break;
+            case 5:
                 while(controleVenda != 2){
                     printf("************* Venda *************\n");
-                    printf("Digite o id do produto:\n");
-                    scanf("%d",&codProd);
-                    printf("Digite a quantidade:\n");
-                    scanf("%d",&quantProd);
-                    controleVenda = RealizarVenda(&listaProdutos, codProd, quantProd);
-                    if(controleVenda == 1){
-                        printf(" Lista vazia!\n");
-                    }
+                    controleVenda = RealizarVenda(&listaProdutos);
                 }
+                controleVenda = 0;
             break;
 
             case 0:
@@ -344,3 +452,4 @@ int main(){
     return 0;
 }
 /*---------------------------------------------------------------------------------------------------------------------------------*/
+
